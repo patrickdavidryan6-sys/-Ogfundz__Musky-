@@ -1,0 +1,7 @@
+.git
+.github
+Dockerfile*
+README.md
+Readme.md
+BUILD_NOTES.md
+SECURITY.md

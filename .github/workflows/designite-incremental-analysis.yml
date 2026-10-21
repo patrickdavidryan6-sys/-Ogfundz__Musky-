@@ -1,0 +1,31 @@
+name: Designite Incremental Code Quality Analysis
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  designite-incremental-analysis:
+    name: Analyze code quality changes
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Designite Incremental Code Quality Analysis
+        uses: DesigniteTools/designite-incremental-analysis@c9ec3cf4d058aa09194f2285f3e8f299cfdfd66f # v2.1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          designite-output-old: designite-output-old
+          designite-output-new: designite-output-new
+          repo-name: ${{ github.event.repository.name }}
+          tool-name: dpy
