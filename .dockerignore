@@ -1,0 +1,7 @@
+.git
+.github
+.DS_Store
+Dockerfile*
+Readme.md
+ollama_stream.py
+lib
