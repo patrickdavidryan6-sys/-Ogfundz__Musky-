@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A seven-day Barcelona itinerary and budget planner for two travelers.">
+  <title>Barcelona — Trip Plan</title>
+  <style>
+    @font-face { font-family: 'DM Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url(https://fonts.gstatic.com/s/dmmono/v16/aFTU7PB1QTsUX8KYthqQBK6PYK0.woff2) format('woff2'); }
+    @font-face { font-family: 'Manrope'; font-style: normal; font-weight: 400 700; font-display: swap; src: url(https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggexSvfedN4.woff2) format('woff2'); }
+    @font-face { font-family: 'Playfair Display'; font-style: italic; font-weight: 500; font-display: swap; src: url(https://fonts.gstatic.com/s/playfairdisplay/v40/nuFRD-vYSZviVYUb_rj3ij__anPXDTnCjmHKM4nYO7KN_pqTXtHA-X-oE0o.woff2) format('woff2'); }
+    :root { --ink:#202a24; --muted:#758079; --paper:#f4f2e9; --card:#fbfaf4; --green:#285443; --lime:#d9ed9c; --line:#d9d9ce; --orange:#ee7148; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:var(--paper); font-family:Manrope, sans-serif; }
+    button { font:inherit; color:inherit; }
+    .shell { min-height:100vh; display:grid; grid-template-columns:232px minmax(0,1fr); }
+    aside { padding:30px 22px; background:var(--green); color:#f9faee; display:flex; flex-direction:column; position:sticky; top:0; height:100vh; }
+    .brand { display:flex; align-items:center; gap:10px; font-weight:700; font-size:19px; letter-spacing:-.5px; margin:0 8px 43px; }
+    .brand-mark { width:30px; height:30px; background:var(--lime); border-radius:50% 50% 48% 12%; position:relative; transform:rotate(-12deg); }
+    .brand-mark:after { content:""; position:absolute; width:9px; height:9px; border:2px solid var(--green); border-radius:50%; top:8px; left:9px; }
+    nav { display:grid; gap:7px; }
+    .nav-item { border:0; background:transparent; color:#c7d0c9; display:flex; gap:13px; align-items:center; padding:12px 13px; border-radius:10px; cursor:pointer; text-align:left; }
+    .nav-item:hover,.nav-item.active { color:#fff; background:#3d6756; }
+    .nav-icon { width:22px; text-align:center; font-size:17px; }
+    .sidebar-foot { margin-top:auto; }
+    .help { border:1px solid #547767; border-radius:13px; padding:17px; margin-bottom:18px; }
+    .help b { display:block; font-size:13px; margin-bottom:5px; }
+    .help p { font-size:11px; line-height:1.55; color:#c7d0c9; margin:0 0 12px; }
+    .help button { width:100%; border:0; border-radius:7px; padding:8px; background:var(--lime); color:var(--ink); font-size:11px; font-weight:700; cursor:pointer; }
+    .profile { display:flex; align-items:center; gap:10px; font-size:12px; }
+    .avatar { width:34px; height:34px; border-radius:50%; display:grid; place-items:center; color:var(--green); background:#f2c4a8; font-weight:700; }
+    main { padding:28px 38px 45px; overflow:hidden; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:26px; }
+    .breadcrumb { font-family:'DM Mono'; color:var(--muted); font-size:11px; letter-spacing:.05em; text-transform:uppercase; }
+    .top-actions { display:flex; align-items:center; gap:10px; }
+    .icon-btn,.primary-btn { border:1px solid var(--line); background:var(--card); border-radius:9px; padding:9px 12px; cursor:pointer; }
+    .primary-btn { background:var(--green); color:#fff; border-color:var(--green); padding:10px 17px; font-size:12px; font-weight:700; }
+    .hero { display:flex; justify-content:space-between; gap:25px; align-items:end; margin-bottom:27px; }
+    h1 { margin:0; font-size:clamp(38px,5vw,65px); line-height:.95; letter-spacing:-3.5px; font-weight:600; }
+    h1 em { font-family:'Playfair Display'; color:var(--orange); font-weight:500; }
+    .trip-meta { display:flex; align-items:center; gap:17px; color:#66716a; font-size:12px; margin-top:16px; }
+    .trip-meta span { display:flex; align-items:center; gap:7px; }
+    .weather { min-width:195px; border-left:1px solid var(--line); padding-left:22px; }
+    .weather strong { font-size:31px; font-weight:500; }
+    .weather small { color:var(--muted); display:block; margin-top:3px; }
+    .tabs { border-bottom:1px solid var(--line); display:flex; gap:30px; margin-bottom:26px; }
+    .tab { border:0; background:none; padding:0 0 12px; font-size:12px; color:var(--muted); cursor:pointer; position:relative; }
+    .tab.active { color:var(--ink); font-weight:700; }
+    .tab.active:after { content:""; height:2px; position:absolute; left:0; right:0; bottom:-1px; background:var(--ink); }
+    .panel { display:none; }.panel.active { display:block; }
+    .content-grid { display:grid; grid-template-columns:minmax(0,1.55fr) minmax(280px,.65fr); gap:22px; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:14px; }
+    .card-head { display:flex; justify-content:space-between; align-items:center; padding:19px 21px; border-bottom:1px solid var(--line); }
+    .card-head h2 { font-size:14px; margin:0; }.card-head small { color:var(--muted); }
+    .day-strip { display:grid; grid-template-columns:repeat(7,1fr); padding:14px 16px; gap:5px; border-bottom:1px solid var(--line); }
+    .day { border:0; background:none; border-radius:8px; padding:8px 2px; cursor:pointer; color:var(--muted); font-family:'DM Mono'; font-size:9px; text-transform:uppercase; }
+    .day b { font:600 15px Manrope; display:block; color:var(--ink); margin-top:3px; }
+    .day.active { background:var(--lime); color:var(--green); }.day.active b{color:var(--green)}
+    .schedule { padding:17px 21px 8px; }
+    .schedule-title { display:flex; justify-content:space-between; align-items:center; margin:0 0 9px; }
+    .schedule-title h3 { font-size:18px; margin:0; }.schedule-title span { color:var(--muted); font-size:11px; }
+    .event { display:grid; grid-template-columns:63px 12px 1fr; gap:11px; padding:13px 0; }
+    .time { font:400 10px 'DM Mono'; color:var(--muted); padding-top:4px; }
+    .timeline { position:relative; display:flex; justify-content:center; }
+    .timeline:after { content:""; position:absolute; top:12px; bottom:-20px; width:1px; background:var(--line); }
+    .event:last-child .timeline:after { display:none; }.dot { z-index:1; width:9px; height:9px; border-radius:50%; border:2px solid var(--orange); background:var(--card); margin-top:5px; }
+    .event-info { display:flex; justify-content:space-between; gap:12px; }
+    .event-info h4 { margin:0 0 5px; font-size:13px; }.event-info p { margin:0; font-size:11px; color:var(--muted); }
+    .event-price { font:500 10px 'DM Mono'; white-space:nowrap; }
+    .right-col { display:grid; gap:18px; align-content:start; }
+    .budget { padding:20px; background:var(--green); color:white; border:0; }
+    .budget-top { display:flex; justify-content:space-between; align-items:start; }.budget h2 { font-size:13px; margin:0; }.budget .amount { margin:14px 0 4px; font-size:31px; letter-spacing:-1px; }.budget small { color:#c6d3cc; }
+    .bar { display:flex; height:8px; border-radius:9px; overflow:hidden; margin:19px 0 14px; gap:2px; }.bar i:nth-child(1){width:42%;background:var(--lime)}.bar i:nth-child(2){width:23%;background:#f3aa78}.bar i:nth-child(3){width:15%;background:#89b8a0}.bar i:nth-child(4){width:20%;background:#547767}
+    .legend { display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:10px; }.legend span:before { content:""; width:7px; height:7px; border-radius:50%; display:inline-block; background:var(--lime); margin-right:6px; }.legend span:nth-child(2):before{background:#f3aa78}.legend span:nth-child(3):before{background:#89b8a0}.legend span:nth-child(4):before{background:#547767}
+    .checklist { padding:18px 20px; }.checklist h2 { font-size:13px; margin:0 0 13px; }.check-row { display:flex; align-items:center; gap:10px; padding:9px 0; font-size:11px; border-bottom:1px solid #e7e6dd; }.check-row:last-child{border:0}.check-row input{accent-color:var(--green)}.check-row.done span{text-decoration:line-through;color:var(--muted)}
+    .overview-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }.overview-card { padding:22px; min-height:150px; }.overview-card h3 { margin:0 0 14px; font-size:14px; }.overview-card strong { font-size:27px; }.overview-card p { color:var(--muted); font-size:12px; line-height:1.6; }
+    .toast { position:fixed; right:25px; bottom:25px; padding:13px 18px; background:var(--ink); color:white; border-radius:9px; font-size:12px; transform:translateY(100px); opacity:0; transition:.25s; }.toast.show{transform:none;opacity:1}
+    @media(max-width:850px){.shell{grid-template-columns:76px 1fr} aside{padding:25px 12px}.brand span,.nav-item span:last-child,.help,.profile div:last-child{display:none}.brand{margin-left:10px}.nav-item{justify-content:center}.content-grid{grid-template-columns:1fr}.right-col{grid-template-columns:1fr 1fr}.overview-grid{grid-template-columns:1fr}.weather{display:none}}
+    @media(max-width:600px){.shell{display:block} aside{height:auto;position:static;flex-direction:row;align-items:center;padding:12px 16px}.brand{margin:0 auto 0 0}.brand span{display:block}nav{display:flex}.nav-item{padding:9px}.sidebar-foot{display:none}main{padding:22px 16px}.top-actions .icon-btn{display:none}.hero{align-items:start}h1{font-size:43px}.trip-meta{flex-wrap:wrap;gap:8px 14px}.right-col{grid-template-columns:1fr}.day-strip{padding:10px 7px}.event{grid-template-columns:48px 10px 1fr}.tabs{gap:19px}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside>
+      <div class="brand"><i class="brand-mark"></i><span>wayfarer.</span></div>
+      <nav aria-label="Main navigation">
+        <button class="nav-item active"><span class="nav-icon">⌂</span><span>My trips</span></button>
+        <button class="nav-item"><span class="nav-icon">♧</span><span>Discover</span></button>
+        <button class="nav-item"><span class="nav-icon">♡</span><span>Saved places</span></button>
+        <button class="nav-item"><span class="nav-icon">⚙</span><span>Preferences</span></button>
+      </nav>
+      <div class="sidebar-foot">
+        <div class="help"><b>Need a local tip?</b><p>Chat with our Barcelona travel experts.</p><button id="expertBtn">Ask an expert</button></div>
+        <div class="profile"><div class="avatar">PR</div><div><b>Patrick Ryan</b><br><span style="color:#aebdb5">Traveler</span></div></div>
+      </div>
+    </aside>
+    <main>
+      <header class="topbar"><div class="breadcrumb">My trips / Barcelona</div><div class="top-actions"><button class="icon-btn" aria-label="Share trip">↗</button><button class="icon-btn" aria-label="More options">•••</button><button class="primary-btn" id="addBtn">+ Add activity</button></div></header>
+      <section class="hero">
+        <div><h1>Seven days in <em>Barcelona</em></h1><div class="trip-meta"><span>◷ Jun 15—22, 2024</span><span>♙ 2 travelers</span><span>◉ Barcelona, Spain</span></div></div>
+        <div class="weather"><strong>26° <span style="color:#edb64c">☀</span></strong><small>Sunny all week · 18° low</small></div>
+      </section>
+      <div class="tabs" role="tablist"><button class="tab active" data-panel="itinerary">Itinerary</button><button class="tab" data-panel="overview">Trip overview</button><button class="tab" data-panel="notes">Notes & links</button></div>
+      <section class="panel active" id="itinerary">
+        <div class="content-grid">
+          <div class="card">
+            <div class="card-head"><h2>Your itinerary</h2><small>7 nights · 8 days</small></div>
+            <div class="day-strip" id="days"></div>
+            <div class="schedule" id="schedule"></div>
+          </div>
+          <div class="right-col">
+            <section class="card budget"><div class="budget-top"><h2>Trip budget</h2><span style="font-size:11px">USD⌄</span></div><div class="amount">$2,340</div><small>of $3,000 planned · $660 remaining</small><div class="bar"><i></i><i></i><i></i><i></i></div><div class="legend"><span>Stay · $980</span><span>Food · $540</span><span>Things · $350</span><span>Other · $470</span></div></section>
+            <section class="card checklist"><h2>Before you go <span style="float:right;color:var(--muted);font-weight:400">3 of 5</span></h2><label class="check-row done"><input type="checkbox" checked><span>Book accommodation</span></label><label class="check-row done"><input type="checkbox" checked><span>Reserve Sagrada Família</span></label><label class="check-row done"><input type="checkbox" checked><span>Download offline map</span></label><label class="check-row"><input type="checkbox"><span>Purchase travel insurance</span></label><label class="check-row"><input type="checkbox"><span>Pack a beach bag</span></label></section>
+          </div>
+        </div>
+      </section>
+      <section class="panel" id="overview"><div class="overview-grid"><article class="card overview-card"><h3>Stay</h3><strong>7 nights</strong><p>Eixample apartment<br>Check-in from 3:00 PM</p></article><article class="card overview-card"><h3>Getting around</h3><strong>T-casual</strong><p>Metro and buses make the city easy. Most itinerary stops are walkable.</p></article><article class="card overview-card"><h3>Budget</h3><strong>$660 left</strong><p>Your plan uses 78% of the $3,000 total trip budget.</p></article></div></section>
+      <section class="panel" id="notes"><div class="card overview-card"><h3>Notes & useful links</h3><p>Restaurant bookings are best made 2–3 days ahead. Keep a light layer for evenings and reserve timed-entry attractions before arrival.</p></div></section>
+    </main>
+  </div>
+  <div class="toast" role="status" aria-live="polite"></div>
+  <script>
+    const plans = [
+      {label:'Sat',date:15,title:'Arrival & first tastes',events:[['3:00 PM','Check in · Eixample','Settle in and take a neighborhood stroll','$0'],['6:00 PM','Passeig de Gràcia','See Casa Batlló and La Pedrera at golden hour','$0'],['8:30 PM','Tapas at El Nacional','Welcome dinner in a landmark modernista hall','$74']]},
+      {label:'Sun',date:16,title:'Gaudí icons',events:[['9:00 AM','Sagrada Família','Timed entry with tower access','$64'],['12:30 PM','Lunch in Gràcia','Seasonal Catalan plates','$45'],['3:00 PM','Park Güell','Monumental zone and panoramic walk','$28']]},
+      {label:'Mon',date:17,title:'Old city stories',events:[['9:30 AM','Gothic Quarter walk','Cathedral lanes and Roman walls','$0'],['1:00 PM','La Boqueria lunch','Market tasting and fresh juices','$38'],['4:00 PM','Picasso Museum','Highlights of the permanent collection','$30']]},
+      {label:'Tue',date:18,title:'Sea & sunshine',events:[['10:00 AM','Barceloneta Beach','A slow morning by the Mediterranean','$0'],['1:30 PM','Seafood lunch','Paella for two near Port Vell','$58'],['6:00 PM','Montjuïc cable car','City and harbor views at sunset','$34']]},
+      {label:'Wed',date:19,title:'Montserrat day trip',events:[['8:00 AM','Train to Montserrat','R5 train and rack railway return','$52'],['10:30 AM','Abbey & mountain walk','Basilica visit and Sant Miquel trail','$0'],['7:30 PM','Dinner in Eixample','Relaxed neighborhood dinner','$55']]},
+      {label:'Thu',date:20,title:'Art & local life',events:[['10:00 AM','Fundació Joan Miró','Modern art on Montjuïc','$30'],['2:00 PM','Poble-sec pintxos','A casual lunch along Carrer de Blai','$40'],['7:00 PM','Flamenco evening','Intimate show in El Born','$70']]},
+      {label:'Fri',date:21,title:'Markets & memories',events:[['9:30 AM','Sant Antoni Market','Browse local food and design stalls','$0'],['1:00 PM','Ciutadella picnic','Pick up lunch and unwind in the park','$32'],['8:30 PM','Farewell dinner','A final Catalan tasting menu','$110']]}
+    ];
+    const days = document.querySelector('#days'), schedule = document.querySelector('#schedule');
+    plans.forEach((p,i)=>{ const b=document.createElement('button'); b.className='day'+(i===0?' active':''); b.innerHTML=`${p.label}<b>${p.date}</b>`; b.onclick=()=>renderDay(i); days.append(b); });
+    function renderDay(i){ document.querySelectorAll('.day').forEach((d,n)=>d.classList.toggle('active',n===i)); const p=plans[i]; schedule.innerHTML=`<div class="schedule-title"><h3>${p.title}</h3><span>June ${p.date}</span></div>`+p.events.map(e=>`<article class="event"><div class="time">${e[0]}</div><div class="timeline"><i class="dot"></i></div><div class="event-info"><div><h4>${e[1]}</h4><p>${e[2]}</p></div><span class="event-price">${e[3]}</span></div></article>`).join(''); }
+    renderDay(0);
+    document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));t.classList.add('active');document.querySelector('#'+t.dataset.panel).classList.add('active')});
+    document.querySelectorAll('.check-row input').forEach(input=>input.onchange=()=>{input.closest('label').classList.toggle('done',input.checked);const n=document.querySelectorAll('.check-row input:checked').length;document.querySelector('.checklist h2 span').textContent=`${n} of 5`});
+    function toast(msg){const t=document.querySelector('.toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
+    document.querySelector('#addBtn').onclick=()=>toast('Activity creator is ready for your next idea.');
+    document.querySelector('#expertBtn').onclick=()=>toast('A Barcelona expert will be with you shortly.');
+  </script>
+</body>
+</html>
