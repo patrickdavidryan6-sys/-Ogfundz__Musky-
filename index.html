@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f1ea">
+  <title>Atelier — Fetch invoice tool</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
+  <style>
+    :root { --ink:#1d231f; --muted:#6e746f; --paper:#f4f1ea; --card:#fbfaf6; --line:#d9d6ce; --green:#1f4938; --mint:#dce9df; --orange:#d96f42; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:Manrope, sans-serif; min-height:100vh; }
+    button { font:inherit; }
+    .shell { display:grid; grid-template-columns:260px 1fr; min-height:100vh; }
+    aside { border-right:1px solid var(--line); padding:30px 24px; display:flex; flex-direction:column; position:sticky; top:0; height:100vh; }
+    .brand { display:flex; align-items:center; gap:10px; font-size:17px; font-weight:700; letter-spacing:-.4px; }
+    .brand-mark { width:28px; height:28px; border-radius:50% 50% 46% 54%; background:var(--green); display:grid; place-items:center; color:white; font:500 13px 'DM Mono'; transform:rotate(-8deg); }
+    .side-label { margin:48px 0 12px; color:#90948f; font:500 10px 'DM Mono'; letter-spacing:1.4px; text-transform:uppercase; }
+    nav a { display:flex; align-items:center; justify-content:space-between; color:var(--muted); padding:10px 12px; text-decoration:none; border-radius:8px; font-size:13px; margin-bottom:3px; }
+    nav a.active { color:var(--ink); background:#e9e5dc; font-weight:600; }
+    .dot { width:7px; height:7px; border-radius:50%; background:var(--orange); }
+    .version { margin-top:auto; display:flex; justify-content:space-between; align-items:center; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font:400 11px 'DM Mono'; }
+    .status { color:var(--green); display:flex; align-items:center; gap:6px; }
+    .status:before { content:""; width:6px; height:6px; background:#4d9b74; border-radius:50%; box-shadow:0 0 0 3px #dbe8df; }
+    main { min-width:0; }
+    header { height:80px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:flex-end; padding:0 5vw; }
+    .header-links { display:flex; align-items:center; gap:26px; font-size:12px; }
+    .header-links a { color:var(--muted); text-decoration:none; }
+    .github { border:1px solid #bdbbb4; padding:9px 14px; border-radius:7px; color:var(--ink)!important; font-weight:600; }
+    .content { max-width:1120px; margin:auto; padding:70px 5vw 90px; }
+    .eyebrow { font:500 11px 'DM Mono'; letter-spacing:1.5px; text-transform:uppercase; color:var(--orange); display:flex; align-items:center; gap:9px; }
+    .eyebrow:before { content:""; width:22px; height:1px; background:var(--orange); }
+    h1 { max-width:760px; margin:22px 0 18px; font-size:clamp(42px,6vw,72px); line-height:.98; letter-spacing:-4px; font-weight:600; }
+    h1 em { font-family:'Playfair Display',serif; font-weight:500; }
+    .intro { max-width:650px; font-size:17px; line-height:1.75; color:var(--muted); }
+    .meta { display:flex; gap:28px; margin-top:32px; font:500 11px 'DM Mono'; color:var(--muted); }
+    .meta span { display:flex; gap:8px; align-items:center; }
+    .meta b { font-weight:500; color:var(--green); background:var(--mint); padding:4px 7px; border-radius:4px; }
+    .workspace { display:grid; grid-template-columns:minmax(0,1.55fr) minmax(280px,.75fr); gap:18px; margin-top:60px; align-items:start; }
+    .panel { background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; box-shadow:0 12px 35px rgba(30,37,32,.04); }
+    .panel-head { height:52px; display:flex; align-items:center; justify-content:space-between; padding:0 17px; border-bottom:1px solid var(--line); }
+    .filename { font:500 11px 'DM Mono'; display:flex; align-items:center; gap:8px; }
+    .filename:before { content:"TS"; color:#397299; font-size:9px; background:#e0ebef; padding:3px; border-radius:3px; }
+    .copy { border:0; background:transparent; color:var(--muted); cursor:pointer; font:500 10px 'DM Mono'; letter-spacing:.5px; padding:8px; }
+    .copy:hover { color:var(--ink); }
+    pre { margin:0; padding:24px 18px 28px; overflow:auto; font:400 12px/1.72 'DM Mono',monospace; tab-size:2; }
+    code { counter-reset:line; }
+    .line { display:block; white-space:pre; }
+    .line:before { counter-increment:line; content:counter(line); color:#b8b8b1; width:30px; display:inline-block; user-select:none; }
+    .kw { color:#9a4263; } .fn { color:#316783; } .str { color:#9a5b32; } .prop { color:#476d59; } .cm { color:#969890; }
+    .side-card { padding:23px; }
+    .side-card h2 { margin:0 0 7px; font-size:15px; }
+    .side-card>p { margin:0 0 21px; color:var(--muted); font-size:12px; line-height:1.6; }
+    .field { margin:15px 0; }
+    label { display:block; font:500 10px 'DM Mono'; margin-bottom:8px; }
+    input { width:100%; background:#f4f2ec; border:1px solid var(--line); border-radius:7px; padding:12px; outline:none; font:400 12px 'DM Mono'; color:var(--ink); }
+    input:focus { border-color:#799383; box-shadow:0 0 0 3px #e3ebe5; }
+    .run { width:100%; border:0; border-radius:7px; background:var(--green); color:white; padding:12px; font-weight:600; font-size:12px; cursor:pointer; transition:.2s; }
+    .run:hover { background:#16382b; transform:translateY(-1px); }
+    .response { margin-top:20px; padding-top:18px; border-top:1px solid var(--line); }
+    .response-head { display:flex; justify-content:space-between; font:500 9px 'DM Mono'; letter-spacing:.7px; text-transform:uppercase; }
+    .ok { color:#347453; }
+    .response pre { background:#efede7; border-radius:7px; margin-top:10px; padding:12px; font-size:10px; line-height:1.65; color:#515852; white-space:pre-wrap; }
+    .annotations { margin-top:80px; }
+    .section-title { display:flex; justify-content:space-between; align-items:end; border-bottom:1px solid var(--line); padding-bottom:17px; }
+    .section-title h2 { font-size:25px; margin:0; letter-spacing:-1px; }
+    .section-title p { margin:0; font:400 10px 'DM Mono'; color:var(--muted); }
+    .annotation-grid { display:grid; grid-template-columns:repeat(3,1fr); }
+    .annotation { padding:27px 24px 15px 0; border-right:1px solid var(--line); margin-right:24px; }
+    .annotation:last-child { border:0; margin-right:0; }
+    .tag { font:500 10px 'DM Mono'; color:var(--green); }
+    .annotation h3 { font-size:14px; margin:13px 0 7px; }
+    .annotation p { font-size:12px; line-height:1.65; color:var(--muted); margin:0; }
+    .menu { display:none; border:0; background:transparent; font-size:20px; }
+    @media(max-width:850px){ .shell{grid-template-columns:1fr} aside{display:none} .workspace{grid-template-columns:1fr} h1{letter-spacing:-2.5px} .content{padding-top:50px} .menu{display:block} header{justify-content:space-between} .header-links a:not(.github){display:none} }
+    @media(max-width:560px){ .content{padding-left:20px;padding-right:20px} .annotation-grid{grid-template-columns:1fr}.annotation{border-right:0;border-bottom:1px solid var(--line);margin:0;padding:24px 0}.meta{flex-wrap:wrap;gap:12px 20px}.section-title p{display:none} pre{font-size:10px;padding-left:10px} }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside>
+      <div class="brand"><span class="brand-mark">A</span> Atelier SDK</div>
+      <p class="side-label">Documentation</p>
+      <nav>
+        <a href="#">Introduction</a><a href="#">Quickstart</a><a href="#">Authentication</a>
+        <a class="active" href="#tool">Tool definitions <span class="dot"></span></a>
+        <a href="#annotations">Annotations</a><a href="#">Error handling</a>
+      </nav>
+      <p class="side-label">Resources</p>
+      <nav><a href="#">API reference <span>↗</span></a><a href="#">Examples <span>↗</span></a></nav>
+      <div class="version"><span>SDK v1.4.2</span><span class="status">Operational</span></div>
+    </aside>
+    <main>
+      <header><button class="menu" aria-label="Open menu">☰</button><div class="header-links"><a href="#">Guides</a><a href="#">Changelog</a><a class="github" href="#">GitHub&nbsp; ↗</a></div></header>
+      <div class="content">
+        <div class="eyebrow">Tool pattern 04</div>
+        <h1>A tool for fetching <em>one</em> invoice.</h1>
+        <p class="intro">A focused, read-only server tool with a typed input, explicit behavioral annotations, and structured output that clients can render with confidence.</p>
+        <div class="meta"><span>METHOD <b>fetch_invoice</b></span><span>INPUT <b>invoiceId: string</b></span><span>ACCESS <b>read only</b></span></div>
+
+        <section class="workspace" id="tool">
+          <div class="panel">
+            <div class="panel-head"><span class="filename">fetch-invoice.ts</span><button class="copy" id="copy">COPY</button></div>
+            <pre aria-label="TypeScript example"><code id="source"><span class="line"><span class="kw">export const</span> fetchInvoice = server.<span class="fn">tool</span>(</span><span class="line">  {</span><span class="line">    <span class="prop">name</span>: <span class="str">"fetch_invoice"</span>,</span><span class="line">    <span class="prop">description</span>: <span class="str">"Fetch one invoice by invoice ID."</span>,</span><span class="line">    <span class="prop">inputSchema</span>: z.<span class="fn">object</span>({ invoiceId: z.<span class="fn">string</span>() }),</span><span class="line">    <span class="prop">annotations</span>: {</span><span class="line">      <span class="prop">readOnlyHint</span>: <span class="kw">true</span>,</span><span class="line">      <span class="prop">destructiveHint</span>: <span class="kw">false</span>,</span><span class="line">      <span class="prop">openWorldHint</span>: <span class="kw">true</span>,</span><span class="line">    },</span><span class="line">  },</span><span class="line">  <span class="kw">async</span> ({ invoiceId }) =&gt; {</span><span class="line">    <span class="kw">const</span> invoice = <span class="kw">await</span> billing.<span class="fn">findInvoice</span>(invoiceId);</span><span class="line"></span><span class="line">    <span class="kw">if</span> (!invoice) {</span><span class="line">      <span class="kw">return</span> {</span><span class="line">        <span class="prop">isError</span>: <span class="kw">true</span>,</span><span class="line">        <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">"text"</span>,</span><span class="line">          <span class="prop">text</span>: <span class="str">`Invoice ${invoiceId} was not found.`</span> }],</span><span class="line">      };</span><span class="line">    }</span><span class="line"></span><span class="line">    <span class="kw">return</span> {</span><span class="line">      <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">"text"</span>, <span class="prop">text</span>: JSON.<span class="fn">stringify</span>(invoice) }],</span><span class="line">      <span class="prop">structuredContent</span>: invoice,</span><span class="line">    };</span><span class="line">  },</span><span class="line">);</span></code></pre>
+          </div>
+          <div class="panel side-card">
+            <h2>Try this tool</h2><p>Send a sample invoice ID and inspect the structured response.</p>
+            <div class="field"><label for="invoice">INVOICE ID</label><input id="invoice" value="inv_84K2M1" spellcheck="false"></div>
+            <button class="run" id="run">Run fetch_invoice&nbsp; →</button>
+            <div class="response"><div class="response-head"><span>Response</span><span class="ok" id="state">● 200 OK</span></div><pre id="output">{
+  "id": "inv_84K2M1",
+  "status": "paid",
+  "total": 248.00,
+  "currency": "USD"
+}</pre></div>
+          </div>
+        </section>
+
+        <section class="annotations" id="annotations">
+          <div class="section-title"><h2>Behavior, made explicit.</h2><p>Annotations help clients use tools safely.</p></div>
+          <div class="annotation-grid">
+            <article class="annotation"><span class="tag">01 / READ ONLY</span><h3>Safe to inspect</h3><p>The tool retrieves data without changing invoices, accounts, or billing state.</p></article>
+            <article class="annotation"><span class="tag">02 / NON-DESTRUCTIVE</span><h3>Nothing is deleted</h3><p>Calling this tool cannot remove or overwrite the customer's existing data.</p></article>
+            <article class="annotation"><span class="tag">03 / OPEN WORLD</span><h3>External data access</h3><p>The tool reaches beyond the client to query the connected billing system.</p></article>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <script>
+    const copy = document.querySelector('#copy');
+    copy.addEventListener('click', async () => {
+      await navigator.clipboard.writeText(document.querySelector('#source').innerText.replace(/^\s*\d+\s?/gm, ''));
+      copy.textContent = 'COPIED ✓'; setTimeout(() => copy.textContent = 'COPY', 1600);
+    });
+    document.querySelector('#run').addEventListener('click', () => {
+      const id = document.querySelector('#invoice').value.trim();
+      const output = document.querySelector('#output');
+      const state = document.querySelector('#state');
+      if (!id) { state.textContent = '● 400 ERROR'; state.style.color = '#b54e37'; output.textContent = JSON.stringify({ error: 'invoiceId is required' }, null, 2); return; }
+      state.textContent = '● RUNNING'; output.textContent = 'Fetching invoice…';
+      setTimeout(() => { state.textContent = '● 200 OK'; state.style.color = ''; output.textContent = JSON.stringify({ id, status: 'paid', total: 248.00, currency: 'USD' }, null, 2); }, 500);
+    });
+  </script>
+</body>
+</html>
