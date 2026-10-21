@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Newsmind turns noisy RSS feeds into a calm, intelligent briefing.">
+  <title>Newsmind — The news, finally in focus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --ink:#17211c; --muted:#617068; --cream:#f5f4ed; --paper:#fff; --green:#b8f344; --deep:#173f32; --line:#dfe3dc; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; color:var(--ink); background:var(--cream); font-family:"DM Sans",sans-serif; }
+    a { color:inherit; text-decoration:none; }
+    button { font:inherit; }
+    .shell { max-width:1240px; margin:auto; padding:0 28px; }
+    nav { height:86px; display:flex; align-items:center; justify-content:space-between; }
+    .brand { display:flex; align-items:center; gap:11px; font:700 20px Manrope,sans-serif; }
+    .mark { width:32px; height:32px; border-radius:9px; background:var(--ink); display:grid; place-items:center; }
+    .mark span { width:15px; height:15px; border:3px solid var(--green); border-radius:50%; position:relative; }
+    .mark span:after { content:""; position:absolute; width:6px; height:3px; background:var(--green); right:-6px; bottom:-2px; transform:rotate(45deg); border-radius:3px; }
+    .navlinks { display:flex; gap:34px; align-items:center; font-size:14px; font-weight:600; }
+    .navlinks a:not(.btn):hover { color:#2d765d; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; border:0; border-radius:11px; padding:13px 20px; background:var(--ink); color:white; font-weight:600; cursor:pointer; transition:.2s ease; }
+    .btn:hover { transform:translateY(-2px); box-shadow:0 8px 22px #17211c28; }
+    .btn.lime { background:var(--green); color:var(--ink); padding:15px 23px; }
+    .hero { min-height:590px; display:grid; grid-template-columns:1.02fr .98fr; align-items:center; gap:60px; padding:50px 0 78px; }
+    .eyebrow { display:inline-flex; align-items:center; gap:9px; background:#e8eadf; border-radius:100px; padding:7px 13px 7px 8px; font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
+    .eyebrow i { width:22px; height:22px; display:grid; place-items:center; border-radius:50%; background:var(--green); font-style:normal; }
+    h1 { font:500 clamp(52px,6.1vw,83px)/.98 Manrope,sans-serif; letter-spacing:-.065em; margin:27px 0 25px; max-width:700px; }
+    h1 em { color:#2d765d; font-style:normal; }
+    .lede { max-width:560px; font-size:18px; line-height:1.65; color:var(--muted); margin-bottom:32px; }
+    .actions { display:flex; align-items:center; gap:22px; }
+    .textlink { font-size:14px; font-weight:700; border-bottom:1px solid #8d9992; padding:8px 0; }
+    .fine { color:#7a867f; font-size:12px; margin-top:17px; }
+    .visual { position:relative; min-height:485px; }
+    .orb { position:absolute; inset:2% 2% 0 10%; border-radius:47% 53% 44% 56% / 55% 42% 58% 45%; background:var(--green); transform:rotate(-5deg); }
+    .dashboard { position:absolute; width:92%; top:51px; left:1%; background:#fcfcf9; border:1px solid #d4d9d1; border-radius:17px; box-shadow:0 30px 60px #243b2e2b; overflow:hidden; transform:rotate(2.5deg); }
+    .dashbar { height:49px; display:flex; align-items:center; gap:6px; border-bottom:1px solid #e6e8e3; padding:0 17px; }
+    .dot { width:7px; height:7px; border-radius:50%; background:#c9cec8; }
+    .dashbrand { margin-left:11px; font-size:10px; font-weight:700; }
+    .dashbody { display:grid; grid-template-columns:105px 1fr; min-height:325px; }
+    .side { padding:18px 10px; border-right:1px solid #e6e8e3; font-size:8px; color:#7a867f; }
+    .side b { display:block; color:var(--ink); background:#edf1e8; padding:9px; border-radius:6px; margin-bottom:5px; }
+    .side span { display:block; padding:8px 9px; }
+    .feed { padding:20px; }
+    .feedtop { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+    .feedtop strong { font:600 16px Manrope; }
+    .feedtop small { background:#eef2ea; padding:6px 9px; border-radius:5px; }
+    .story { display:grid; grid-template-columns:1fr 92px; gap:12px; border-top:1px solid #e8eae6; padding:12px 0; }
+    .story:first-of-type { border:0; }
+    .tag { color:#47705d; text-transform:uppercase; font-size:7px; font-weight:700; letter-spacing:.08em; }
+    .story h3 { font:600 11px/1.35 Manrope; margin:5px 0; }
+    .story p { color:#879089; font-size:8px; margin:0; }
+    .thumb { border-radius:7px; background:linear-gradient(140deg,#283c35,#7a9b86); }
+    .story:nth-child(3) .thumb { background:linear-gradient(140deg,#dbc9a6,#765e4d); }
+    .story:nth-child(4) .thumb { background:linear-gradient(140deg,#bacad9,#4c6381); }
+    .floatcard { position:absolute; right:-8px; bottom:36px; width:205px; padding:15px; background:white; border:1px solid #dce1da; border-radius:13px; box-shadow:0 18px 35px #263a3025; transform:rotate(-3deg); }
+    .floatcard .top { display:flex; justify-content:space-between; font-size:9px; margin-bottom:10px; }
+    .floatcard b { font-size:11px; }
+    .bar { display:flex; gap:4px; align-items:end; height:40px; }
+    .bar i { flex:1; background:#dbe8c2; border-radius:3px 3px 0 0; }
+    .bar i:nth-child(2),.bar i:nth-child(5) { background:var(--green); }
+    .logos { border-top:1px solid #dde1da; padding:30px 0 42px; display:flex; align-items:center; justify-content:space-between; color:#7b857f; }
+    .logos p { max-width:150px; font-size:12px; line-height:1.4; font-weight:600; }
+    .logos b { font:600 15px Manrope; letter-spacing:-.02em; }
+    .features { background:var(--deep); color:white; padding:92px 0; }
+    .sectionhead { display:flex; align-items:end; justify-content:space-between; gap:30px; margin-bottom:48px; }
+    .sectionhead h2 { font:500 clamp(36px,4vw,55px)/1.08 Manrope; letter-spacing:-.045em; margin:12px 0 0; max-width:650px; }
+    .sectionhead p { max-width:365px; color:#b9cbc2; line-height:1.6; }
+    .featuregrid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    .feature { padding:29px; min-height:245px; background:#204b3c; border:1px solid #315b4c; border-radius:15px; }
+    .icon { width:42px; height:42px; background:var(--green); color:var(--ink); display:grid; place-items:center; border-radius:10px; font-size:20px; }
+    .feature h3 { font:600 20px Manrope; margin:40px 0 12px; }
+    .feature p { color:#b9cbc2; font-size:14px; line-height:1.6; }
+    .mobile { display:none; background:none; border:0; font-size:25px; }
+    @media(max-width:800px){ .navlinks a:not(.btn){display:none}.mobile{display:block}.navlinks .btn{display:none}.hero{grid-template-columns:1fr;padding-top:40px}.visual{min-height:410px}.logos{flex-wrap:wrap;gap:22px}.logos p{width:100%}.featuregrid{grid-template-columns:1fr}.sectionhead{align-items:start;flex-direction:column}.floatcard{right:0}.shell{padding:0 20px} }
+    @media(max-width:480px){ h1{font-size:50px}.hero{gap:20px}.visual{min-height:350px}.dashboard{width:100%;top:25px}.dashbody{grid-template-columns:78px 1fr}.story{grid-template-columns:1fr 65px}.floatcard{display:none}.actions{align-items:stretch;flex-direction:column}.textlink{text-align:center}.logos b{width:40%} }
+  </style>
+</head>
+<body>
+  <header class="shell">
+    <nav aria-label="Main navigation">
+      <a class="brand" href="#"><span class="mark"><span></span></span> newsmind</a>
+      <div class="navlinks"><a href="#features">Features</a><a href="#how">How it works</a><a href="#pricing">Pricing</a><a href="#signin">Sign in</a><a class="btn" href="#start">Start reading smarter</a><button class="mobile" aria-label="Open menu">☰</button></div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero shell">
+      <div>
+        <span class="eyebrow"><i>✦</i> Your intelligent news reader</span>
+        <h1>Less noise.<br><em>More signal.</em></h1>
+        <p class="lede">Newsmind turns the feeds you trust into a calm, personalized briefing—grouping every angle of a story so you can understand more and scroll less.</p>
+        <div class="actions"><a class="btn lime" href="#start">Try Newsmind free <span>→</span></a><a class="textlink" href="#how">See how it works</a></div>
+        <p class="fine">14 days free · No credit card required</p>
+      </div>
+      <div class="visual" aria-label="Preview of the Newsmind reading dashboard">
+        <div class="orb"></div>
+        <div class="dashboard">
+          <div class="dashbar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span class="dashbrand">◉ newsmind</span></div>
+          <div class="dashbody">
+            <aside class="side"><b>▦ Today</b><span>◫ All stories</span><span>⌁ Watches</span><span>☆ Saved</span><span>＋ Add feed</span></aside>
+            <div class="feed"><div class="feedtop"><strong>Your briefing</strong><small>☀ Good morning</small></div>
+              <article class="story"><div><span class="tag">Technology · 8 sources</span><h3>AI models are getting smaller—and much more useful</h3><p>12 min ago · 4 min read</p></div><div class="thumb"></div></article>
+              <article class="story"><div><span class="tag">Climate · 5 sources</span><h3>A new approach to mapping our changing coastlines</h3><p>1 hr ago · 6 min read</p></div><div class="thumb"></div></article>
+              <article class="story"><div><span class="tag">Design · 3 sources</span><h3>Why quiet interfaces are having a moment</h3><p>2 hrs ago · 3 min read</p></div><div class="thumb"></div></article>
+            </div>
+          </div>
+        </div>
+        <div class="floatcard"><div class="top"><b>Your reading week</b><span>•••</span></div><div class="bar"><i style="height:35%"></i><i style="height:67%"></i><i style="height:48%"></i><i style="height:80%"></i><i style="height:95%"></i><i style="height:58%"></i><i style="height:72%"></i></div></div>
+      </div>
+    </section>
+    <section class="logos shell"><p>Built for curious minds at teams like</p><b>NOTION</b><b>linear</b><b>vercel▲</b><b>stripe</b><b>ARC'TERYX</b></section>
+    <section class="features" id="features"><div class="shell">
+      <div class="sectionhead"><div><span class="eyebrow"><i>✦</i> A better way to stay informed</span><h2>Your feeds, with a mind of their own.</h2></div><p>Bring every source you value into one thoughtful space. Newsmind does the sorting, so you can focus on what matters.</p></div>
+      <div class="featuregrid">
+        <article class="feature"><div class="icon">⌁</div><h3>One story. Every angle.</h3><p>Related coverage is automatically grouped into clear story clusters—no more reading the same news five times.</p></article>
+        <article class="feature"><div class="icon">✦</div><h3>Search by meaning</h3><p>Find the exact idea you remember, even when you can't recall the headline, publisher, or precise words.</p></article>
+        <article class="feature"><div class="icon">◉</div><h3>Watch what matters</h3><p>Create intelligent watches for people, companies, and topics. We'll surface important updates as they happen.</p></article>
+      </div>
+    </div></section>
+  </main>
+</body>
+</html>
