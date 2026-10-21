@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="cURL example for updating vector store file attributes.">
+  <title>Update vector store file attributes</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --canvas: #090a0c;
+      --surface: #111317;
+      --surface-raised: #171a1f;
+      --border: #2a2e35;
+      --text: #f5f5f4;
+      --muted: #9da3ae;
+      --accent: #a7f3d0;
+      --command: #d8b4fe;
+      --url: #93c5fd;
+      --string: #bef264;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 76% 12%, rgba(167, 243, 208, .08), transparent 26rem),
+        radial-gradient(circle at 20% 90%, rgba(147, 197, 253, .05), transparent 32rem),
+        var(--canvas);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .page {
+      width: min(1080px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 72px 0 56px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 40px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .breadcrumb strong { color: #d7d9dd; font-weight: 600; }
+    .breadcrumb span { color: #565c66; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 18px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .badge::before {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 14px rgba(167, 243, 208, .65);
+      content: "";
+    }
+
+    h1 {
+      max-width: 760px;
+      margin: 0;
+      font-size: clamp(38px, 6vw, 64px);
+      font-weight: 650;
+      letter-spacing: -.045em;
+      line-height: 1.02;
+    }
+
+    .lead {
+      max-width: 660px;
+      margin: 22px 0 42px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+    code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+
+    .inline-code {
+      padding: 2px 6px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      background: var(--surface);
+      color: #dfe2e7;
+      font-size: .9em;
+    }
+
+    .code-card {
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(17, 19, 23, .94);
+      box-shadow: 0 28px 90px rgba(0, 0, 0, .38);
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 58px;
+      padding: 0 14px 0 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .language {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #d2d5da;
+      font: 600 13px/1 "SFMono-Regular", Consolas, monospace;
+    }
+
+    .method {
+      padding: 5px 8px;
+      border-radius: 5px;
+      background: rgba(167, 243, 208, .1);
+      color: var(--accent);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .06em;
+    }
+
+    button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 11px;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--muted);
+      font: 600 12px/1 inherit;
+      cursor: pointer;
+      transition: background .15s, border-color .15s, color .15s;
+    }
+
+    button:hover, button:focus-visible {
+      border-color: var(--border);
+      background: var(--surface-raised);
+      color: var(--text);
+      outline: none;
+    }
+
+    button svg { width: 15px; height: 15px; }
+
+    pre {
+      margin: 0;
+      padding: 30px clamp(18px, 4vw, 36px) 34px;
+      overflow-x: auto;
+      color: #d9dce1;
+      font: 14px/1.85 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      tab-size: 2;
+    }
+
+    .cmd { color: var(--command); }
+    .url { color: var(--url); }
+    .string { color: var(--string); }
+
+    .note {
+      display: flex;
+      gap: 13px;
+      margin-top: 22px;
+      padding: 17px 19px;
+      border: 1px solid #252a31;
+      border-radius: 10px;
+      background: rgba(17, 19, 23, .58);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .note svg { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 1px; color: var(--accent); }
+
+    @media (max-width: 600px) {
+      .page { width: min(100% - 24px, 1080px); padding: 32px 0; }
+      .breadcrumb { margin-bottom: 28px; }
+      .lead { margin-bottom: 30px; font-size: 15px; }
+      pre { font-size: 12px; }
+      .language .endpoint { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <strong>API reference</strong><span>/</span>Vector stores<span>/</span>Files
+    </nav>
+
+    <p class="badge">Vector store files</p>
+    <h1>Update file attributes</h1>
+    <p class="lead">Attach or replace custom attributes on a file in a vector store. Substitute your <code class="inline-code">vector_store_id</code> and <code class="inline-code">file_id</code> before sending the request.</p>
+
+    <section class="code-card" aria-labelledby="request-label">
+      <header class="toolbar">
+        <div class="language" id="request-label">
+          <span class="method">POST</span>
+          <span class="endpoint">cURL</span>
+        </div>
+        <button id="copy-button" type="button" aria-label="Copy cURL request">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>
+          </svg>
+          <span>Copy</span>
+        </button>
+      </header>
+      <pre aria-label="cURL request example"><code><span class="cmd">curl</span> <span class="url">https://api.openai.com/v1/vector_stores/{vector_store_id}/files/{file_id}</span> \
+  -H <span class="string">"Authorization: Bearer $OPENAI_API_KEY"</span> \
+  -H <span class="string">"Content-Type: application/json"</span> \
+  -d <span class="string">'{"attributes": {"key1": "value1", "key2": 2}}'</span></code></pre>
+    </section>
+
+    <aside class="note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></svg>
+      <span>Keep your API key secret and load it from the <code class="inline-code">OPENAI_API_KEY</code> environment variable rather than placing it directly in source code.</span>
+    </aside>
+  </main>
+
+  <script>
+    const copyButton = document.querySelector("#copy-button");
+    const code = document.querySelector("pre code");
+
+    copyButton.addEventListener("click", async () => {
+      await navigator.clipboard.writeText(code.textContent);
+      const label = copyButton.querySelector("span");
+      label.textContent = "Copied";
+      setTimeout(() => label.textContent = "Copy", 1600);
+    });
+  </script>
+</body>
+</html>
