@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Chat Completions API reference documentation.">
+  <title>Chat Completions | API Reference</title>
+  <style>
+    :root { --ink:#171717; --muted:#6b6b6b; --line:#e5e5e5; --soft:#f7f7f7; --green:#0d8a6a; --blue:#2f6feb; --sidebar:270px; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; color:var(--ink); font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:14px; }
+    button,input { font:inherit; }
+    .topbar { position:sticky; top:0; z-index:20; height:64px; display:flex; align-items:center; gap:28px; padding:0 28px; border-bottom:1px solid var(--line); background:rgba(255,255,255,.96); backdrop-filter:blur(12px); }
+    .brand { display:flex; align-items:center; gap:10px; min-width:215px; color:var(--ink); font-weight:650; text-decoration:none; }
+    .brand-mark { width:25px; height:25px; }
+    .search { position:relative; width:min(420px,40vw); }
+    .search svg { position:absolute; top:11px; left:13px; width:16px; color:#777; }
+    .search input { width:100%; height:38px; padding:0 65px 0 38px; border:1px solid #dedede; border-radius:8px; background:#fafafa; outline:none; }
+    .search input:focus { border-color:#aaa; background:white; box-shadow:0 0 0 3px #eee; }
+    .shortcut { position:absolute; right:9px; top:8px; padding:3px 7px; border:1px solid #ddd; border-radius:5px; color:#777; font-size:11px; }
+    .top-links { display:flex; align-items:center; gap:22px; margin-left:auto; }
+    .top-links a { color:#444; text-decoration:none; font-size:13px; }
+    .login { padding:8px 14px; border-radius:7px; background:#171717; color:white!important; }
+    .layout { display:grid; grid-template-columns:var(--sidebar) minmax(0,1fr); }
+    .sidebar { position:sticky; top:64px; height:calc(100vh - 64px); overflow:auto; padding:28px 20px 60px 28px; border-right:1px solid var(--line); background:#fff; }
+    .nav-label { margin:20px 10px 8px; color:#999; font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+    .nav-label:first-child { margin-top:0; }
+    .nav-item { display:block; padding:7px 10px; border-radius:6px; color:#555; line-height:1.3; text-decoration:none; }
+    .nav-item:hover { background:var(--soft); color:#111; }
+    .nav-item.active { background:#f0f0f0; color:#111; font-weight:600; }
+    .nav-item.sub { padding-left:23px; color:#777; font-size:13px; }
+    .main { min-width:0; }
+    .hero { padding:70px clamp(40px,6vw,90px) 56px; border-bottom:1px solid var(--line); }
+    .crumbs { margin-bottom:26px; color:#878787; font-size:13px; }
+    .crumbs span { margin:0 8px; color:#bbb; }
+    h1 { margin:0 0 16px; font-size:42px; font-weight:650; letter-spacing:-.035em; }
+    .lede { max-width:670px; margin:0; color:#5f5f5f; font-size:17px; line-height:1.65; }
+    .content { display:grid; grid-template-columns:minmax(430px,700px) minmax(350px,1fr); }
+    .docs { padding:56px clamp(36px,5vw,72px) 100px; }
+    .examples { padding:56px clamp(24px,4vw,54px); border-left:1px solid var(--line); background:#fafafa; }
+    h2 { margin:0 0 11px; font-size:25px; letter-spacing:-.02em; }
+    .section-intro { margin:0 0 30px; color:var(--muted); line-height:1.65; }
+    .endpoint { display:flex; align-items:center; gap:12px; margin:22px 0 34px; padding:13px 15px; border:1px solid var(--line); border-radius:9px; font:13px ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .method { padding:4px 7px; border-radius:5px; background:#e8f7f2; color:var(--green); font:700 11px ui-monospace,monospace; }
+    .param-title { margin:36px 0 8px; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+    .param { padding:20px 0; border-top:1px solid var(--line); }
+    .param-head { display:flex; align-items:baseline; gap:10px; }
+    .param-name { font:600 13px ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .param-type { color:#8b8b8b; font:12px ui-monospace,monospace; }
+    .required { color:#c43b3b; font-size:11px; font-weight:600; }
+    .param p { margin:9px 0 0; color:#5e5e5e; line-height:1.6; }
+    details { border-top:1px solid var(--line); }
+    summary { display:flex; justify-content:space-between; padding:17px 0; cursor:pointer; list-style:none; font-weight:550; }
+    summary::after { content:"+"; color:#888; font-size:17px; }
+    details[open] summary::after { content:"−"; }
+    details p { margin:-4px 0 18px; color:var(--muted); line-height:1.6; }
+    .tabs { display:flex; gap:4px; margin-bottom:12px; }
+    .tab { padding:7px 11px; border:0; border-radius:6px; background:transparent; color:#777; cursor:pointer; }
+    .tab.active { background:#e9e9e9; color:#222; font-weight:600; }
+    .code-card { position:relative; overflow:hidden; border:1px solid #30343b; border-radius:10px; background:#17191d; color:#d9dde5; box-shadow:0 12px 34px rgba(0,0,0,.08); }
+    .code-title { padding:13px 16px; border-bottom:1px solid #30343b; color:#aeb4bf; font-size:12px; }
+    .copy { position:absolute; top:8px; right:9px; padding:6px 9px; border:0; border-radius:5px; background:#292c32; color:#cdd1d8; cursor:pointer; font-size:11px; }
+    pre { margin:0; padding:20px; overflow:auto; font:12.5px/1.72 ui-monospace,SFMono-Regular,Menlo,monospace; white-space:pre; }
+    .kw { color:#c9a6ff; } .str { color:#a8d895; } .key { color:#9dc9ff; }
+    .response-heading { margin:38px 0 12px; color:#666; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; }
+    .status { color:#86d5b3; }
+    .no-results { display:none; margin:10px; color:#888; }
+    @media(max-width:900px){ .top-links a:not(.login){display:none}.content{grid-template-columns:1fr}.examples{border-left:0;border-top:1px solid var(--line)} }
+    @media(max-width:680px){ .topbar{padding:0 16px}.brand{min-width:auto}.brand span{display:none}.search{width:100%}.sidebar{display:none}.layout{grid-template-columns:1fr}.hero{padding:42px 22px}.docs,.examples{padding:38px 22px}h1{font-size:34px} }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#"><svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2.7a4.4 4.4 0 0 1 4.2 3 4.4 4.4 0 0 1 4.3 6.8 4.4 4.4 0 0 1-4.2 6.8A4.4 4.4 0 0 1 8 18a4.4 4.4 0 0 1-4.3-6.7A4.4 4.4 0 0 1 8 4.5 4.4 4.4 0 0 1 12 2.7Z"/><path d="m8 4.5 8.2 4.7v9.9M3.7 11.3l8.3 4.8 8.5-4.9M8 18V8.5l8.2-2.8"/></svg><span>API Reference</span></a>
+    <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="search" aria-label="Search documentation" placeholder="Search documentation"><span class="shortcut">⌘ K</span></div>
+    <nav class="top-links"><a href="#">Guides</a><a href="#">API Reference</a><a href="#" class="login">Log in</a></nav>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="nav-label">API reference</div><a class="nav-item" href="#">Introduction</a><a class="nav-item" href="#">Authentication</a><a class="nav-item" href="#">Errors</a>
+      <div class="nav-label">Endpoints</div><a class="nav-item active" href="#overview">Chat Completions</a><a class="nav-item sub" href="#create">Create chat completion</a><a class="nav-item sub" href="#messages">Messages</a><a class="nav-item sub" href="#tools">Tools</a><a class="nav-item" href="#">Responses</a><a class="nav-item" href="#">Audio</a><a class="nav-item" href="#">Images</a><a class="nav-item" href="#">Models</a><a class="nav-item" href="#">Embeddings</a>
+      <div class="nav-label">Administration</div><a class="nav-item" href="#">Projects</a><a class="nav-item" href="#">API keys</a><p class="no-results">No results found</p>
+    </aside>
+    <main class="main">
+      <section class="hero" id="overview"><div class="crumbs">API reference <span>/</span> Chat Completions</div><h1>Chat Completions</h1><p class="lede">Given a list of messages comprising a conversation, the model will return a response.</p></section>
+      <div class="content">
+        <article class="docs">
+          <section id="create"><h2>Create chat completion</h2><p class="section-intro">Creates a model response for the given chat conversation. Learn more in the text generation guide.</p><div class="endpoint"><span class="method">POST</span><span>/chat/completions</span></div>
+          <div class="param-title">Request body</div>
+          <div class="param" id="messages"><div class="param-head"><span class="param-name">messages</span><span class="param-type">array</span><span class="required">Required</span></div><p>A list of messages comprising the conversation so far. Depending on the model, different message types are supported.</p></div>
+          <div class="param"><div class="param-head"><span class="param-name">model</span><span class="param-type">string</span><span class="required">Required</span></div><p>ID of the model to use. See the model endpoint compatibility table for details on which models work with Chat Completions.</p></div>
+          <details open><summary>audio <span class="param-type">object or null</span></summary><p>Parameters for audio output. Required when audio output is requested with <code>modalities: ["audio"]</code>.</p></details>
+          <details><summary>frequency_penalty <span class="param-type">number or null</span></summary><p>Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency.</p></details>
+          <details><summary>max_completion_tokens <span class="param-type">integer or null</span></summary><p>An upper bound for the number of tokens that can be generated for a completion.</p></details>
+          <details><summary>modalities <span class="param-type">array or null</span></summary><p>Output types you would like the model to generate. Most models generate text by default.</p></details>
+          <details id="tools"><summary>tools <span class="param-type">array</span></summary><p>A list of tools the model may call. Currently, custom tools and functions are supported.</p></details>
+          <details><summary>tool_choice <span class="param-type">string or object</span></summary><p>Controls which tool is called by the model: none, auto, required, or a named tool.</p></details>
+          </section>
+        </article>
+        <aside class="examples">
+          <div class="tabs" role="tablist"><button class="tab active" data-lang="curl">curl</button><button class="tab" data-lang="python">Python</button><button class="tab" data-lang="js">JavaScript</button></div>
+          <div class="code-card"><div class="code-title">Request</div><button class="copy">Copy</button><pre><code id="request-code"></code></pre></div>
+          <div class="response-heading">Response</div>
+          <div class="code-card"><div class="code-title"><span class="status">200</span> application/json</div><button class="copy">Copy</button><pre><code><span class="key">{</span>
+  <span class="key">"id"</span>: <span class="str">"chatcmpl-B9MBs8CjcvOU2jLn4n570S5qMJKcT"</span>,
+  <span class="key">"object"</span>: <span class="str">"chat.completion"</span>,
+  <span class="key">"created"</span>: 1741569952,
+  <span class="key">"model"</span>: <span class="str">"gpt-4.1-mini"</span>,
+  <span class="key">"choices"</span>: [
+    {
+      <span class="key">"index"</span>: 0,
+      <span class="key">"message"</span>: {
+        <span class="key">"role"</span>: <span class="str">"assistant"</span>,
+        <span class="key">"content"</span>: <span class="str">"Hello! How can I help?"</span>
+      },
+      <span class="key">"finish_reason"</span>: <span class="str">"stop"</span>
+    }
+  ]
+}</code></pre></div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script>
+    const snippets = {
+      curl: `curl https://api.openai.com/v1/chat/completions \\\n  -H "Content-Type: application/json" \\\n  -H "Authorization: Bearer $OPENAI_API_KEY" \\\n  -d '{\n    "model": "gpt-4.1-mini",\n    "messages": [{\n      "role": "user",\n      "content": "Hello!"\n    }]\n  }'`,
+      python: `from openai import OpenAI\n\nclient = OpenAI()\ncompletion = client.chat.completions.create(\n    model="gpt-4.1-mini",\n    messages=[\n        {"role": "user", "content": "Hello!"}\n    ]\n)\n\nprint(completion.choices[0].message)`,
+      js: `import OpenAI from "openai";\n\nconst client = new OpenAI();\nconst completion = await client.chat.completions.create({\n  model: "gpt-4.1-mini",\n  messages: [\n    { role: "user", content: "Hello!" }\n  ]\n});\n\nconsole.log(completion.choices[0].message);`
+    };
+    const requestCode = document.querySelector("#request-code");
+    const setSnippet = lang => { requestCode.textContent = snippets[lang]; };
+    setSnippet("curl");
+    document.querySelectorAll(".tab").forEach(tab => tab.addEventListener("click", () => { document.querySelectorAll(".tab").forEach(t => t.classList.remove("active")); tab.classList.add("active"); setSnippet(tab.dataset.lang); }));
+    document.querySelectorAll(".copy").forEach(button => button.addEventListener("click", async () => { await navigator.clipboard.writeText(button.parentElement.querySelector("code").textContent); button.textContent="Copied"; setTimeout(()=>button.textContent="Copy",1400); }));
+    const search = document.querySelector("#search");
+    search.addEventListener("input", () => { const q=search.value.toLowerCase(); let shown=0; document.querySelectorAll(".sidebar .nav-item").forEach(item => { const match=item.textContent.toLowerCase().includes(q); item.style.display=match?"block":"none"; shown+=match; }); document.querySelector(".no-results").style.display=shown?"none":"block"; });
+    document.addEventListener("keydown", e => { if ((e.metaKey||e.ctrlKey)&&e.key==="k") { e.preventDefault(); search.focus(); } });
+  </script>
+</body>
+</html>
