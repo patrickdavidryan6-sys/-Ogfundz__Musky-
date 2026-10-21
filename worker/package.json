@@ -1,0 +1,9 @@
+{
+  "name": "codebuilder-pro-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "test": "node --test test/*.test.mjs"
+  }
+}

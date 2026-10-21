@@ -1,0 +1,14 @@
+name = "codebuilder-pro-api"
+main = "src/index.ts"
+compatibility_date = "2026-09-25"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "codebuilder-pro"
+database_id = "replace-with-production-database-id"
+
+[[r2_buckets]]
+binding = "SOURCE_ASSETS"
+bucket_name = "codebuilder-pro-source-assets"
+
+# Set API_TOKEN and WEBHOOK_SECRET with `wrangler secret put`; never add them here.
