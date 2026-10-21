@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pod Lifecycle"
+  short_description: "Manage and troubleshoot existing pods safely"
+  default_prompt: "Inspect or manage an existing pod using verified live state and safe lifecycle actions."
